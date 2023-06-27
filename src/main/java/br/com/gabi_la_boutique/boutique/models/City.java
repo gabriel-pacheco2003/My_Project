@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,22 +15,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Entity(name = "venda_produto")
-public class Sell_Product {
+@Entity(name = "cidade")
+public class City {
 	
 	@Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_venda_produto")
+	@Column(name = "id_cidade")
 	private Integer id;
+	
+	@Column(name = "nome_cidade", unique = true)
+	private String name;
 
-	@ManyToOne
-	private Sell sell;
-	
-	@ManyToOne
-	private Product product;
-	
-	@Column(name = "qtde_venda_produto")
-	private Integer amount_sell;
-	
 }

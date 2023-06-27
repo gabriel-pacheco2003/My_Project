@@ -24,7 +24,7 @@ public class Category {
 	@Column(name = "id_categoria")
 	private Integer id;
 	
-	@Column(name = "descricao_categoria")
+	@Column(name = "descricao_categoria", unique = true)
 	private String description;
 	
 }

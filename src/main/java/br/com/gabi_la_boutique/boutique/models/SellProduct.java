@@ -16,22 +16,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Entity(name = "endereco")
-public class Address {
-
+@Entity(name = "venda_produto")
+public class SellProduct {
+	
 	@Setter
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_endereco")
+	@Column(name = "id_venda_produto")
 	private Integer id;
 
-	@Column(name = "rua_endereco")
-	private String street;
-
-	@Column(name = "bairro_endereco")
-	private String neighborhood;
-
-	@ManyToOne	
-	private City city;
+	@ManyToOne
+	private Sell sell;
+	
+	@ManyToOne
+	private Product product;
+	
+	@Column(name = "qtde_venda_produto")
+	private Integer amountSell;
 	
 }

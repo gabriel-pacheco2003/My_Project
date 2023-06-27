@@ -25,7 +25,7 @@ public class Phone {
 	@Column(name = "id_telefone")
 	private Integer id;
 	
-	@Column(name = "numero_telefone")
+	@Column(name = "numero_telefone", unique = true)
 	private String number;
 	
 	@ManyToOne
