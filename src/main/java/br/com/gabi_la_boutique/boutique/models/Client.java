@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,9 +26,11 @@ public class Client {
 	@Column(name = "id_cliente")
 	private Integer id;
 
+	@NotNull
 	@Column(name = "nome_cliente")
 	private String name;
 
+	@NotNull
 	@Column(name = "email_cliente", unique = true)
 	private String email;
 

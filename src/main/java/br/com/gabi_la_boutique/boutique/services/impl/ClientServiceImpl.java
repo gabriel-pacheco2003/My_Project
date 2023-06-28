@@ -18,7 +18,23 @@ public class ClientServiceImpl implements ClientService {
 	@Autowired
 	private ClientRepository repository;
 
-	private void validateEmail(Client client) {
+	private void validateClient(Client client) {
+		if (client.getName() == null) {
+			throw new IntegrityViolation("Nome inválido");
+		}
+
+		if (client.getEmail() == null) {
+			throw new IntegrityViolation("Email inválido");
+		}
+
+		if (client.getName() == null) {
+			throw new IntegrityViolation("Nome inválido");
+		}
+
+		if (client.getAddress() == null) {
+			throw new IntegrityViolation("Endereço inválido");
+		}
+		
 		Client find = repository.findByEmail(client.getEmail());
 		if (find != null && find.getId() != client.getId()) {
 			throw new IntegrityViolation("Email já existente");
@@ -27,13 +43,12 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public Client findById(Integer id) {
-		return repository.findById(id)
-				.orElseThrow(() -> new ObjectNotFound("Cliente %s não encontrado".formatted(id)));
+		return repository.findById(id).orElseThrow(() -> new ObjectNotFound("Cliente %s não encontrado".formatted(id)));
 	}
 
 	@Override
 	public Client insert(Client client) {
-		validateEmail(client);
+		validateClient(client);
 		return repository.save(client);
 	}
 
@@ -47,7 +62,7 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public Client update(Client client) {
-		validateEmail(client);
+		validateClient(client);
 		return repository.save(client);
 	}
 

@@ -14,8 +14,10 @@ public interface SellRepository extends JpaRepository<Sell, Integer>{
 	
 	List<Sell> findByClient(Client client);
 	
-	List<Sell> findByDate(LocalDate date);
+	List<Sell> findByDateOrderByDateDesc(LocalDate date);
 	
 	List<Sell> findByDateBetween(LocalDate dateIn, LocalDate dateFin);
 
+	Sell findByDate(LocalDate date);
+	
 }

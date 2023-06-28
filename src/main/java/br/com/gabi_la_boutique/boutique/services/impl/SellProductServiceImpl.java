@@ -19,10 +19,19 @@ public class SellProductServiceImpl implements SellProductService{
 	@Autowired
 	private SellProductRepository repository;
 	
-	private void validateAmountSell(SellProduct sellProduct) {
-		if (sellProduct.getAmountSell() == null || sellProduct.getAmountSell() <= 0){
+	private void validateSellProduct(SellProduct sellProduct) {
+		if (sellProduct.getSell() == null){
 			throw new IntegrityViolation("Venda inválida"); 
 		}
+		
+		if (sellProduct.getProduct() == null){
+			throw new IntegrityViolation("Produto inválida"); 
+		}
+		
+		if (sellProduct.getAmountSell() == null || sellProduct.getAmountSell() <= 0){
+			throw new IntegrityViolation("Quantidade inválida"); 
+		}
+		
 		if (sellProduct.getAmountSell() > sellProduct.getProduct().getAmount()) {
 			throw new IntegrityViolation("Estoque menor que a quantidade requerida");
 		}
@@ -36,7 +45,7 @@ public class SellProductServiceImpl implements SellProductService{
 
 	@Override
 	public SellProduct insert(SellProduct sellProduct) {
-		validateAmountSell(sellProduct);
+		validateSellProduct(sellProduct);
 		return repository.save(sellProduct);
 	}
 
@@ -50,7 +59,7 @@ public class SellProductServiceImpl implements SellProductService{
 
 	@Override
 	public SellProduct update(SellProduct sellProduct) {
-		validateAmountSell(sellProduct);
+		validateSellProduct(sellProduct);
 		return repository.save(sellProduct);
 	}
 

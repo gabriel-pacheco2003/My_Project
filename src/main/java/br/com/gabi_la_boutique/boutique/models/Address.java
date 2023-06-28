@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,9 +26,11 @@ public class Address {
 	@Column(name = "id_endereco")
 	private Integer id;
 
+	@NotNull
 	@Column(name = "rua_endereco")
 	private String street;
 
+	@NotNull
 	@Column(name = "bairro_endereco")
 	private String neighborhood;
 

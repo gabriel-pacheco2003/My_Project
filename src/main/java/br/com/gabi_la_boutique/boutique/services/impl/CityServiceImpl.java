@@ -17,7 +17,11 @@ public class CityServiceImpl implements CityService {
 	@Autowired
 	private CityRepository repository;
 
-	private void validateName(City city) {
+	private void validateCity(City city) {
+		if (city.getName() == null) {
+			throw new IntegrityViolation("Cidade inválido");
+		}
+
 		City find = repository.findByName(city.getName());
 		if (find != null && find.getId() != city.getId()) {
 			throw new IntegrityViolation("Cidade já existente");
@@ -26,13 +30,12 @@ public class CityServiceImpl implements CityService {
 
 	@Override
 	public City findById(Integer id) {
-		return repository.findById(id)
-				.orElseThrow(() -> new ObjectNotFound("Cidade %s não encontrada".formatted(id)));
+		return repository.findById(id).orElseThrow(() -> new ObjectNotFound("Cidade %s não encontrada".formatted(id)));
 	}
 
 	@Override
 	public City insert(City city) {
-		validateName(city);
+		validateCity(city);
 		return repository.save(city);
 	}
 
@@ -46,7 +49,7 @@ public class CityServiceImpl implements CityService {
 
 	@Override
 	public City update(City city) {
-		validateName(city);
+		validateCity(city);
 		return repository.save(city);
 	}
 

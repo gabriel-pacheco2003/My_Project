@@ -9,6 +9,7 @@ import br.com.gabi_la_boutique.boutique.models.Category;
 import br.com.gabi_la_boutique.boutique.models.Product;
 import br.com.gabi_la_boutique.boutique.repositories.ProductRepository;
 import br.com.gabi_la_boutique.boutique.services.ProductService;
+import br.com.gabi_la_boutique.boutique.services.exceptions.IntegrityViolation;
 import br.com.gabi_la_boutique.boutique.services.exceptions.ObjectNotFound;
 
 @Service
@@ -17,6 +18,24 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductRepository repository;
 
+	private void validateProduct(Product product) {
+		if(product.getName() == null) {
+			throw new IntegrityViolation("Nome inválido");
+		}
+		
+		if(product.getAmount() == null || product.getAmount() < 0) {
+			throw new IntegrityViolation("Quantidade inválido");
+		}
+		
+		if(product.getPrice() == null || product.getPrice() < 0) {
+			throw new IntegrityViolation("Preço inválido");
+		}
+		
+		if(product.getCategory() == null) {
+			throw new IntegrityViolation("Categoria inválido");
+		}
+	}
+	
 	@Override
 	public Product findById(Integer id) {
 		return repository.findById(id)
@@ -25,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Product insert(Product product) {
+		validateProduct(product);
 		return repository.save(product);
 	}
 
@@ -38,6 +58,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Product update(Product product) {
+		validateProduct(product);
 		return repository.save(product);
 	}
 

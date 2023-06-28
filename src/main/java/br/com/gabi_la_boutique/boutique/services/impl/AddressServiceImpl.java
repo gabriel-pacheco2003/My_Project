@@ -9,6 +9,7 @@ import br.com.gabi_la_boutique.boutique.models.Address;
 import br.com.gabi_la_boutique.boutique.models.City;
 import br.com.gabi_la_boutique.boutique.repositories.AddressRepository;
 import br.com.gabi_la_boutique.boutique.services.AddressService;
+import br.com.gabi_la_boutique.boutique.services.exceptions.IntegrityViolation;
 import br.com.gabi_la_boutique.boutique.services.exceptions.ObjectNotFound;
 
 @Service
@@ -16,6 +17,18 @@ public class AddressServiceImpl implements AddressService {
 
 	@Autowired
 	private AddressRepository repository;
+
+	private void validateAddress(Address address) {
+		if (address.getStreet() == null) {
+			throw new IntegrityViolation("Rua inválida");
+		}
+		if (address.getNeighborhood() == null) {
+			throw new IntegrityViolation("Bairro inválida");
+		}
+		if (address.getCity() == null) {
+			throw new IntegrityViolation("Cidade inválida");
+		}
+	}
 
 	@Override
 	public Address findById(Integer id) {
@@ -25,6 +38,7 @@ public class AddressServiceImpl implements AddressService {
 
 	@Override
 	public Address insert(Address address) {
+		validateAddress(address);
 		return repository.save(address);
 	}
 
@@ -38,6 +52,7 @@ public class AddressServiceImpl implements AddressService {
 
 	@Override
 	public Address update(Address address) {
+		validateAddress(address);
 		return repository.save(address);
 	}
 
@@ -67,7 +82,8 @@ public class AddressServiceImpl implements AddressService {
 			String neighborhood) {
 		if (repository.findByStreetContainingIgnoreCaseAndNeighborhoodContainingIgnoreCase(street, neighborhood)
 				.isEmpty()) {
-			throw new ObjectNotFound("Nenhum endereço encontrado com a rua %s e o bairro %s".formatted(street, neighborhood));
+			throw new ObjectNotFound(
+					"Nenhum endereço encontrado com a rua %s e o bairro %s".formatted(street, neighborhood));
 		}
 		return repository.findByStreetContainingIgnoreCaseAndNeighborhoodContainingIgnoreCase(street, neighborhood);
 	}

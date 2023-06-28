@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,12 +26,15 @@ public class Product {
 	@Column(name = "id_produto")
 	private Integer id;
 
+	@NotNull
 	@Column(name = "nome_produto")
 	private String name;
 	
+	@NotNull
 	@Column(name = "qtde_produto")
 	private Integer amount;
 	
+	@NotNull
 	@Column(name = "preço_produto")
 	private Double price;
 	

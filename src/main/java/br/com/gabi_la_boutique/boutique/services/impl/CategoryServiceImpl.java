@@ -18,6 +18,10 @@ public class CategoryServiceImpl implements CategoryService {
 	private CategoryRepository repository;
 
 	private void validateCategory(Category category) {
+		if (category.getDescription() == null) {
+			throw new IntegrityViolation("Categoria inválida");
+		}
+
 		Category find = repository.findByDescription(category.getDescription());
 		if (find != null && find.getId() != category.getId()) {
 			throw new IntegrityViolation("Categoria já existente");
