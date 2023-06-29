@@ -18,21 +18,19 @@ public class PhoneServiceImpl implements PhoneService {
 	@Autowired
 	private PhoneRepository repository;
 
-	private String validatePhone(Phone phone) {
+	private void validatePhone(Phone phone) {
 		if (phone.getClient() == null) {
 			throw new IntegrityViolation("Cliente inválido");
 		}
-
+		
 		if (phone.getNumber().replaceAll("[^0-9]", "").length() != 11) {
+			throw new IntegrityViolation("Número de telefone incorreto");
+		}
+		
+		Phone find = repository.findByNumberContaining(phone.getNumber());
+		if (find == null || find.getId() != phone.getId()) {
 			throw new IntegrityViolation("Número de telefone inválido");
 		}
-		String areaCode = phone.getNumber().replaceAll("[^0-9]", "").substring(0, 2);
-		String prefix = phone.getNumber().replaceAll("[^0-9]", "").substring(2, 7);
-		String suffix = phone.getNumber().replaceAll("[^0-9]", "").substring(7);
-
-		String formattedNumber = String.format("(%s) %s-%s", areaCode, prefix, suffix);
-
-		return formattedNumber;
 	}
 
 	@Override
@@ -44,6 +42,7 @@ public class PhoneServiceImpl implements PhoneService {
 	@Override
 	public Phone insert(Phone phone) {
 		validatePhone(phone);
+		phone.formatNumber(phone.getNumber());
 		return repository.save(phone);
 	}
 
@@ -58,6 +57,7 @@ public class PhoneServiceImpl implements PhoneService {
 	@Override
 	public Phone update(Phone phone) {
 		validatePhone(phone);
+		phone.formatNumber(phone.getNumber());
 		return repository.save(phone);
 	}
 

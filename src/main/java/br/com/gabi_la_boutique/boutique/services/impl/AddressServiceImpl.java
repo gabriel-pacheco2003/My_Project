@@ -23,7 +23,7 @@ public class AddressServiceImpl implements AddressService {
 			throw new IntegrityViolation("Rua inválida");
 		}
 		if (address.getNeighborhood() == null) {
-			throw new IntegrityViolation("Bairro inválida");
+			throw new IntegrityViolation("Bairro inválido");
 		}
 		if (address.getCity() == null) {
 			throw new IntegrityViolation("Cidade inválida");
@@ -91,7 +91,7 @@ public class AddressServiceImpl implements AddressService {
 	@Override
 	public List<Address> findByCity(City city) {
 		if (repository.findByCity(city).isEmpty()) {
-			throw new ObjectNotFound("Nenhum endereço encontrado com a cidade %s".formatted(city));
+			throw new ObjectNotFound("Nenhum endereço encontrado");
 		}
 		return repository.findByCity(city);
 	}

@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public List<Category> findByDescriptionContainingIgnoreCase(String description) {
 		if (repository.findByDescriptionContainingIgnoreCase(description).isEmpty()) {
-			throw new ObjectNotFound("Nenhuma categoria encontrada com a descrição %s".formatted(description));
+			throw new ObjectNotFound("Nenhuma categoria encontrada");
 		}
 		return repository.findByDescriptionContainingIgnoreCase(description);
 	}

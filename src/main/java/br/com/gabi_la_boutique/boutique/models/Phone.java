@@ -1,5 +1,6 @@
 package br.com.gabi_la_boutique.boutique.models;
 
+import br.com.gabi_la_boutique.boutique.models.dto.PhoneDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,4 +34,23 @@ public class Phone {
 	@ManyToOne
 	private Client client;
 
+	public String formatNumber(String number) {
+		String digits = number.replaceAll("[^0-9]", "");
+		String areaCode = digits.substring(0, 2);
+		String prefix = digits.substring(2, 7);
+		String suffix = digits.substring(7);
+		String formatNumber = String.format("(%s) %s-%s".formatted(areaCode, prefix, suffix));
+		this.number = formatNumber;
+		return this.number;
+	}
+	
+	public Phone(PhoneDTO dto, Client client) {
+		this(dto.getId(), dto.getNumber(), client);
+	}
+	
+	public PhoneDTO toDTO() {
+		return new PhoneDTO(id, number, client.getId(), client.getName());
+	}
+
+	
 }

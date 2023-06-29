@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gabi_la_boutique.boutique.models.Client;
 import br.com.gabi_la_boutique.boutique.models.Phone;
+import br.com.gabi_la_boutique.boutique.models.dto.PhoneDTO;
 import br.com.gabi_la_boutique.boutique.services.ClientService;
 import br.com.gabi_la_boutique.boutique.services.PhoneService;
 
@@ -29,26 +30,27 @@ public class PhoneResource {
 	private ClientService clientService;
 
 	@PostMapping
-	public ResponseEntity<Phone> insert(@RequestBody Phone phone) {
-		clientService.findById(phone.getClient().getId());
-		return ResponseEntity.ok(service.insert(phone));
+	public ResponseEntity<PhoneDTO> insert(@RequestBody PhoneDTO phoneDTO) {
+		return ResponseEntity
+				.ok(service.insert(new Phone(phoneDTO, clientService.findById(phoneDTO.getClientId()))).toDTO());
+
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Phone> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(service.findById(id));
+	public ResponseEntity<PhoneDTO> findById(@PathVariable Integer id) {
+		return ResponseEntity.ok(service.findById(id).toDTO());
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Phone>> listAll() {
-		return ResponseEntity.ok(service.listAll().stream().map((phone) -> phone).toList());
+	public ResponseEntity<List<PhoneDTO>> listAll() {
+		return ResponseEntity.ok(service.listAll().stream().map((phone) -> phone.toDTO()).toList());
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Phone> update(@PathVariable Integer id, @RequestBody Phone phone) {
+	public ResponseEntity<PhoneDTO> update(@PathVariable Integer id, @RequestBody PhoneDTO phoneDTO) {
+		Phone phone = new Phone(phoneDTO, clientService.findById(phoneDTO.getClientId()));
 		phone.setId(id);
-		clientService.findById(phone.getClient().getId());
-		return ResponseEntity.ok(service.update(phone));
+		return ResponseEntity.ok(service.update(phone).toDTO());
 	}
 
 	@DeleteMapping("/{id}")
@@ -59,7 +61,8 @@ public class PhoneResource {
 
 	@GetMapping("/number/{number}")
 	public ResponseEntity<List<Phone>> findByNumberOrderByClient(@PathVariable String number) {
-		return ResponseEntity.ok(service.findByNumberOrderByClient(number).stream().map((phone) -> phone).toList());
+		return ResponseEntity
+				.ok(service.findByNumberOrderByClient(number).stream().map((phone) -> phone).toList());
 	}
 
 	@GetMapping("/client/{clientId}")

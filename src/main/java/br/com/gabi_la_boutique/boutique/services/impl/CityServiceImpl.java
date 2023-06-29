@@ -19,7 +19,7 @@ public class CityServiceImpl implements CityService {
 
 	private void validateCity(City city) {
 		if (city.getName() == null) {
-			throw new IntegrityViolation("Cidade inválido");
+			throw new IntegrityViolation("Cidade inválida");
 		}
 
 		City find = repository.findByName(city.getName());

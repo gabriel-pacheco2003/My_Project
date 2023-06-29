@@ -27,14 +27,10 @@ public class ClientServiceImpl implements ClientService {
 			throw new IntegrityViolation("Email inválido");
 		}
 
-		if (client.getName() == null) {
-			throw new IntegrityViolation("Nome inválido");
-		}
-
 		if (client.getAddress() == null) {
 			throw new IntegrityViolation("Endereço inválido");
 		}
-		
+
 		Client find = repository.findByEmail(client.getEmail());
 		if (find != null && find.getId() != client.getId()) {
 			throw new IntegrityViolation("Email já existente");
@@ -68,7 +64,7 @@ public class ClientServiceImpl implements ClientService {
 
 	@Override
 	public void delete(Integer id) {
-		repository.save(findById(id));
+		repository.delete(findById(id));
 	}
 
 	@Override
@@ -90,7 +86,7 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public List<Client> findByAddressOrderByName(Address address) {
 		if (repository.findByAddressOrderByName(address).isEmpty()) {
-			throw new ObjectNotFound("Nenhum cliente encontrado com o endereço %s".formatted(address));
+			throw new ObjectNotFound("Nenhum cliente encontrado".formatted(address));
 		}
 		return repository.findByAddressOrderByName(address);
 	}
