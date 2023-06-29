@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gabi_la_boutique.boutique.models.Address;
 import br.com.gabi_la_boutique.boutique.models.Client;
+import br.com.gabi_la_boutique.boutique.models.dto.ClientDTO;
 import br.com.gabi_la_boutique.boutique.services.AddressService;
 import br.com.gabi_la_boutique.boutique.services.ClientService;
 
@@ -29,26 +30,27 @@ public class ClientResource {
 	private AddressService addressService;
 
 	@PostMapping
-	public ResponseEntity<Client> insert(@RequestBody Client client) {
-		addressService.findById(client.getAddress().getId());
-		return ResponseEntity.ok(service.insert(client));
+	public ResponseEntity<ClientDTO> insert(@RequestBody ClientDTO clientDTO) {
+		return ResponseEntity
+				.ok(service.insert(new Client(clientDTO, addressService.findById(clientDTO.getAddressId()))).toDTO());
+
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Client> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(service.findById(id));
+	public ResponseEntity<ClientDTO> findById(@PathVariable Integer id) {
+		return ResponseEntity.ok(service.findById(id).toDTO());
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Client>> listAll() {
-		return ResponseEntity.ok(service.listAll().stream().map((client) -> client).toList());
+	public ResponseEntity<List<ClientDTO>> listAll() {
+		return ResponseEntity.ok(service.listAll().stream().map((client) -> client.toDTO()).toList());
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Client> update(@PathVariable Integer id, @RequestBody Client client) {
+	public ResponseEntity<ClientDTO> update(@PathVariable Integer id, @RequestBody ClientDTO clientDTO) {
+		Client client = new Client(clientDTO, addressService.findById(clientDTO.getAddressId()));
 		client.setId(id);
-		addressService.findById(client.getAddress().getId());
-		return ResponseEntity.ok(service.update(client));
+		return ResponseEntity.ok(service.update(client).toDTO());
 	}
 
 	@DeleteMapping("/{id}")

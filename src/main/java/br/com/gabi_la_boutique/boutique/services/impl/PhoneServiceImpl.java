@@ -24,11 +24,11 @@ public class PhoneServiceImpl implements PhoneService {
 		}
 		
 		if (phone.getNumber().replaceAll("[^0-9]", "").length() != 11) {
-			throw new IntegrityViolation("Número de telefone incorreto");
+			throw new IntegrityViolation("Número de telefone com tamanho incorreto");
 		}
 		
 		Phone find = repository.findByNumberContaining(phone.getNumber());
-		if (find == null || find.getId() != phone.getId()) {
+		if (find != null && find.getId() != phone.getId()) {
 			throw new IntegrityViolation("Número de telefone inválido");
 		}
 	}
@@ -41,8 +41,8 @@ public class PhoneServiceImpl implements PhoneService {
 
 	@Override
 	public Phone insert(Phone phone) {
-		validatePhone(phone);
 		phone.formatNumber(phone.getNumber());
+		validatePhone(phone);
 		return repository.save(phone);
 	}
 
@@ -56,8 +56,8 @@ public class PhoneServiceImpl implements PhoneService {
 
 	@Override
 	public Phone update(Phone phone) {
-		validatePhone(phone);
 		phone.formatNumber(phone.getNumber());
+		validatePhone(phone);
 		return repository.save(phone);
 	}
 
@@ -77,7 +77,7 @@ public class PhoneServiceImpl implements PhoneService {
 	@Override
 	public List<Phone> findByClient(Client client) {
 		if (repository.findByClient(client).isEmpty()) {
-			throw new ObjectNotFound("Nenhum número de telefone encontrado com o cliente %s".formatted(client));
+			throw new ObjectNotFound("Nenhum número de telefone encontrado");
 		}
 		return repository.findByClient(client);
 	}

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gabi_la_boutique.boutique.models.City;
 import br.com.gabi_la_boutique.boutique.models.Sell;
+import br.com.gabi_la_boutique.boutique.models.dto.SellDTO;
 import br.com.gabi_la_boutique.boutique.services.ClientService;
 import br.com.gabi_la_boutique.boutique.services.SellService;
 
@@ -30,26 +31,26 @@ public class SellResource {
 	private ClientService clientService;
 
 	@PostMapping
-	public ResponseEntity<Sell> insert(@RequestBody Sell sell) {
-		clientService.findById(sell.getClient().getId());
-		return ResponseEntity.ok(service.insert(sell));
+	public ResponseEntity<SellDTO> insert(@RequestBody SellDTO sellDTO) {
+		return ResponseEntity
+				.ok(service.insert(new Sell(sellDTO, clientService.findById(sellDTO.getClientId()))).toDTO());
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Sell> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(service.findById(id));
+	public ResponseEntity<SellDTO> findById(@PathVariable Integer id) {
+		return ResponseEntity.ok(service.findById(id).toDTO());
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Sell>> listAll() {
-		return ResponseEntity.ok(service.listAll().stream().map((sell) -> sell).toList());
+	public ResponseEntity<List<SellDTO>> listAll() {
+		return ResponseEntity.ok(service.listAll().stream().map((sell) -> sell.toDTO()).toList());
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Sell> update(@PathVariable Integer id, @RequestBody Sell sell) {
+	public ResponseEntity<SellDTO> update(@PathVariable Integer id, @RequestBody SellDTO sellDTO) {
+		Sell sell = new Sell(sellDTO, clientService.findById(sellDTO.getClientId()));
 		sell.setId(id);
-		clientService.findById(sell.getClient().getId());
-		return ResponseEntity.ok(service.update(sell));
+		return ResponseEntity.ok(service.update(sell).toDTO());
 	}
 
 	@DeleteMapping("/{id}")
@@ -57,19 +58,20 @@ public class SellResource {
 		service.delete(id);
 		return ResponseEntity.ok().build();
 	}
-	
+
 	@GetMapping("/client/{clientId}")
 	public ResponseEntity<List<Sell>> findByClient(@PathVariable City clientId) {
 		return ResponseEntity.ok(service.findByClient(clientService.findById(clientId.getId())));
 	}
-	
+
 	@GetMapping("/date/{date}")
 	public ResponseEntity<List<Sell>> findByDateOrderByDateDesc(@PathVariable LocalDate date) {
 		return ResponseEntity.ok(service.findByDateOrderByDateDesc(date).stream().map((sell) -> sell).toList());
 	}
-	
+
 	@GetMapping("/inicialDate/{dateIn}/finalDate/{dateFin}")
-	public ResponseEntity<List<Sell>> findByDateBetween(@PathVariable LocalDate dateIn, @PathVariable LocalDate dateFin) {
+	public ResponseEntity<List<Sell>> findByDateBetween(@PathVariable LocalDate dateIn,
+			@PathVariable LocalDate dateFin) {
 		return ResponseEntity.ok(service.findByDateBetween(dateIn, dateFin).stream().map((sell) -> sell).toList());
 	}
 

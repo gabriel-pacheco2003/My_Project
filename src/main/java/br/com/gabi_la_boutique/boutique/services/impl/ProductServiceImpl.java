@@ -24,15 +24,15 @@ public class ProductServiceImpl implements ProductService {
 		}
 		
 		if(product.getAmount() == null || product.getAmount() < 0) {
-			throw new IntegrityViolation("Quantidade inválido");
+			throw new IntegrityViolation("Quantidade inválida");
 		}
 		
-		if(product.getPrice() == null || product.getPrice() < 0) {
+		if(product.getPrice() == null || product.getPrice() <= 0) {
 			throw new IntegrityViolation("Preço inválido");
 		}
 		
 		if(product.getCategory() == null) {
-			throw new IntegrityViolation("Categoria inválido");
+			throw new IntegrityViolation("Categoria inválida");
 		}
 	}
 	
@@ -102,7 +102,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public List<Product> findByCategory(Category category) {
 		if (repository.findByCategory(category).isEmpty()) {
-			throw new ObjectNotFound("Nenhum produto encontrado com a categoria %s".formatted(category));
+			throw new ObjectNotFound("Nenhum produto encontrado");
 		}
 		return repository.findByCategory(category);
 	}

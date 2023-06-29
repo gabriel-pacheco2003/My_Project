@@ -1,5 +1,6 @@
 package br.com.gabi_la_boutique.boutique.models;
 
+import br.com.gabi_la_boutique.boutique.models.dto.ClientDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,5 +37,13 @@ public class Client {
 
 	@ManyToOne
 	private Address address;
+	
+	 public Client(ClientDTO dto, Address address) {
+	    	this(dto.getId(), dto.getName(), dto.getEmail(), address);
+	    }
+	    
+	    public ClientDTO toDTO() {
+	    	return new ClientDTO(id, name, email, address.getId(), address.getCity().getName());
+	    }
 
 }

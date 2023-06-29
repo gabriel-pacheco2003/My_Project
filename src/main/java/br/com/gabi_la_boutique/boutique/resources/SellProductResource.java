@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.gabi_la_boutique.boutique.models.Product;
 import br.com.gabi_la_boutique.boutique.models.Sell;
 import br.com.gabi_la_boutique.boutique.models.SellProduct;
+import br.com.gabi_la_boutique.boutique.models.dto.SellProductDTO;
 import br.com.gabi_la_boutique.boutique.services.ProductService;
 import br.com.gabi_la_boutique.boutique.services.SellProductService;
 import br.com.gabi_la_boutique.boutique.services.SellService;
@@ -34,28 +35,30 @@ public class SellProductResource {
 	private ProductService productService;
 
 	@PostMapping
-	public ResponseEntity<SellProduct> insert(@RequestBody SellProduct sellProduct) {
-		sellService.findById(sellProduct.getSell().getId());
-		productService.findById(sellProduct.getProduct().getId());
-		return ResponseEntity.ok(service.insert(sellProduct));
+	public ResponseEntity<SellProductDTO> insert(@RequestBody SellProductDTO sellProductDTO) {
+		return ResponseEntity.ok(
+				service.insert(new SellProduct(sellProductDTO, productService.findById(sellProductDTO.getProductId()),
+						sellService.findById(sellProductDTO.getSellId()))).toDTO());
+
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<SellProduct> findById(@PathVariable Integer id) {
-		return ResponseEntity.ok(service.findById(id));
+	public ResponseEntity<SellProductDTO> findById(@PathVariable Integer id) {
+		return ResponseEntity.ok(service.findById(id).toDTO());
 	}
 
 	@GetMapping
-	public ResponseEntity<List<SellProduct>> listAll() {
-		return ResponseEntity.ok(service.listAll().stream().map((sellProduct) -> sellProduct).toList());
+	public ResponseEntity<List<SellProductDTO>> listAll() {
+		return ResponseEntity.ok(service.listAll().stream().map((sellProduct) -> sellProduct.toDTO()).toList());
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<SellProduct> update(@PathVariable Integer id, @RequestBody SellProduct sellProduct) {
+	public ResponseEntity<SellProductDTO> update(@PathVariable Integer id, @RequestBody SellProductDTO sellProductDTO) {
+		SellProduct sellProduct = new SellProduct(sellProductDTO,
+				productService.findById(sellProductDTO.getProductId()),
+				sellService.findById(sellProductDTO.getSellId()));
 		sellProduct.setId(id);
-		sellService.findById(sellProduct.getSell().getId());
-		productService.findById(sellProduct.getProduct().getId());
-		return ResponseEntity.ok(service.update(sellProduct));
+		return ResponseEntity.ok(service.update(sellProduct).toDTO());
 	}
 
 	@DeleteMapping("/{id}")

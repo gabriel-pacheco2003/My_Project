@@ -15,7 +15,7 @@ import br.com.gabi_la_boutique.boutique.services.exceptions.ObjectNotFound;
 import jakarta.transaction.Transactional;
 
 @Transactional
-public class PhoneServiceImpl extends BaseTests{
+public class PhoneServiceTest extends BaseTests{
 
 	@Autowired
 	PhoneService phoneService;
@@ -32,7 +32,7 @@ public class PhoneServiceImpl extends BaseTests{
 	void findByIdTest() {
 		var phone = phoneService.findById(1);
 		assertEquals(1, phone.getId());
-		assertEquals("(11)11111-1111", phone.getNumber());
+		assertEquals("(11) 11111-1111", phone.getNumber());
 		assertEquals("Cliente 1", phone.getClient().getName());
 	}
 
@@ -50,10 +50,10 @@ public class PhoneServiceImpl extends BaseTests{
 	@Sql("classpath:/resources/sqls/cliente.sql")
 	@Sql("classpath:/resources/sqls/telefone.sql")
 	void insertPhoneTest() {
-		Phone phone = new Phone(6, "(66)66666-6666", clientService.findById(1));
+		Phone phone = new Phone(1, "(66) 66666-6666", clientService.findById(1));
 		phoneService.insert(phone);
-		assertEquals(6, phone.getId());
-		assertEquals("(66)66666-6666", phone.getNumber());
+		assertEquals(1, phone.getId());
+		assertEquals("(66) 66666-6666", phone.getNumber());
 		assertEquals("Cliente 1", phone.getClient().getName());
 	}
 	
@@ -64,9 +64,9 @@ public class PhoneServiceImpl extends BaseTests{
 	@Sql("classpath:/resources/sqls/cliente.sql")
 	@Sql("classpath:/resources/sqls/telefone.sql")
 	void insertInvalidPhoneTest() {
-		Phone phone = new Phone(6, "(66)66666-66666", clientService.findById(1));
+		Phone phone = new Phone(6, "(66) 66666-66666", clientService.findById(1));
 		var exception = assertThrows(IntegrityViolation.class, () -> phoneService.insert(phone));
-		assertEquals("Número de telefone incorreto", exception.getMessage());
+		assertEquals("Número de telefone com tamanho incorreto", exception.getMessage());
 	}
 
 	@Test
@@ -106,10 +106,10 @@ public class PhoneServiceImpl extends BaseTests{
 	@Sql("classpath:/resources/sqls/cliente.sql")
 	@Sql("classpath:/resources/sqls/telefone.sql")
 	void updatePhoneTest() {
-		assertEquals("(11)11111-1111", phoneService.findById(1).getNumber());
-		Phone phoneUpdate = new Phone(1, "(11)11111-1112", clientService.findById(1));
+		assertEquals("(11) 11111-1111", phoneService.findById(1).getNumber());
+		Phone phoneUpdate = new Phone(1, "66 666666666", clientService.findById(1));
 		phoneService.update(phoneUpdate);
-		assertEquals("(66)66666-6666", phoneService.findById(1).getNumber());
+		assertEquals("(66) 66666-6666", phoneService.findById(1).getNumber());
 	}
 	
 	@Test
@@ -119,8 +119,8 @@ public class PhoneServiceImpl extends BaseTests{
 	@Sql("classpath:/resources/sqls/cliente.sql")
 	@Sql("classpath:/resources/sqls/telefone.sql")
 	void updatePhoneWithDuplicatedNumberTest() {
-		assertEquals("(11)11111-1111", phoneService.findById(1).getNumber());
-		Phone phoneUpdate = new Phone(null, "(22)22222-2222", clientService.findById(1));
+		assertEquals("(11) 11111-1111", phoneService.findById(1).getNumber());
+		Phone phoneUpdate = new Phone(null, "(22) 22222-2222", clientService.findById(1));
 		var exception = assertThrows(IntegrityViolation.class, () -> phoneService.insert(phoneUpdate));
 		assertEquals("Número de telefone inválido", exception.getMessage());
 	}
@@ -141,6 +141,50 @@ public class PhoneServiceImpl extends BaseTests{
 	void deleteClientNonExistsTest() {
 		var exception = assertThrows(ObjectNotFound.class, () -> phoneService.delete(1));
 		assertEquals("Número de telefone 1 não encontrado", exception.getMessage());
+	}
+	
+	@Test
+	@DisplayName("Teste busca por número")
+	@Sql("classpath:/resources/sqls/cidade.sql")
+	@Sql("classpath:/resources/sqls/endereco.sql")
+	@Sql("classpath:/resources/sqls/cliente.sql")
+	@Sql("classpath:/resources/sqls/telefone.sql")
+	void findByNumberTest() {
+		assertEquals(1, phoneService.findByNumberOrderByClient("(11) 11111-1111").size());
+	}
+	
+	@Test
+	@DisplayName("Teste busca por número não encontrado")
+	@Sql("classpath:/resources/sqls/cidade.sql")
+	@Sql("classpath:/resources/sqls/endereco.sql")
+	@Sql("classpath:/resources/sqls/cliente.sql")
+	@Sql("classpath:/resources/sqls/telefone.sql")
+	void findByNumberNotFoundTest() {
+		var exception = assertThrows(ObjectNotFound.class,
+				() -> phoneService.findByNumberOrderByClient("48123456789"));
+		assertEquals("Nenhum número de telefone encontrado com o número 48123456789", exception.getMessage());
+	}
+	
+	@Test
+	@DisplayName("Teste busca por cliente")
+	@Sql("classpath:/resources/sqls/cidade.sql")
+	@Sql("classpath:/resources/sqls/endereco.sql")
+	@Sql("classpath:/resources/sqls/cliente.sql")
+	@Sql("classpath:/resources/sqls/telefone.sql")
+	void findByClientTest() {
+		assertEquals(2, phoneService.findByClient(clientService.findById(1)).size());
+	}
+	
+	@Test
+	@DisplayName("Teste busca por cliente não encontrado")
+	@Sql("classpath:/resources/sqls/cidade.sql")
+	@Sql("classpath:/resources/sqls/endereco.sql")
+	@Sql("classpath:/resources/sqls/cliente.sql")
+	@Sql("classpath:/resources/sqls/telefone.sql")
+	void findByClientNotFoundTest() {
+		var exception = assertThrows(ObjectNotFound.class,
+				() -> phoneService.findByClient(clientService.findById(3)));
+		assertEquals("Nenhum número de telefone encontrado", exception.getMessage());
 	}
 	
 }

@@ -1,0 +1,3 @@
+INSERT INTO produto (id_produto, qtde_produto, nome_produto, preço_produto, category_id_categoria) VALUES(1 , 10, 'Produto 1', 10.0, 1);
+INSERT INTO produto (id_produto, qtde_produto, nome_produto, preço_produto, category_id_categoria) VALUES(2 , 20, 'Produto 2', 20.0, 1);
+INSERT INTO produto (id_produto, qtde_produto, nome_produto, preço_produto, category_id_categoria) VALUES(3 , 30, 'Produto 3', 30.0, 2);
