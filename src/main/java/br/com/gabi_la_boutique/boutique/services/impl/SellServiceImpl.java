@@ -23,9 +23,10 @@ public class SellServiceImpl implements SellService {
 		if (sell.getClient() == null) {
 			throw new IntegrityViolation("Cliente inválido");
 		}
-
-		Sell find = repository.findByDate(sell.getDate());
-		if (find != null && find.getDate().isBefore(LocalDate.now())) {
+	}
+	
+	private void validateDate(Sell sell) {
+		if (sell.getDate() != null && sell.getDate().isAfter(LocalDate.now())){
 			throw new IntegrityViolation("Data inválida");
 		}
 	}
@@ -38,6 +39,7 @@ public class SellServiceImpl implements SellService {
 	@Override
 	public Sell insert(Sell sell) {
 		validateSell(sell);
+		validateDate(sell);
 		return repository.save(sell);
 	}
 
@@ -52,6 +54,7 @@ public class SellServiceImpl implements SellService {
 	@Override
 	public Sell update(Sell sell) {
 		validateSell(sell);
+		validateDate(sell);
 		return repository.save(sell);
 	}
 
@@ -63,7 +66,7 @@ public class SellServiceImpl implements SellService {
 	@Override
 	public List<Sell> findByClient(Client client) {
 		if (repository.findByClient(client).isEmpty()) {
-			throw new ObjectNotFound("Nenhuma venda encontrada com o cliente %s".formatted(client));
+			throw new ObjectNotFound("Nenhuma venda encontrada");
 		}
 		return repository.findByClient(client);
 	}
@@ -71,7 +74,7 @@ public class SellServiceImpl implements SellService {
 	@Override
 	public List<Sell> findByDateOrderByDateDesc(LocalDate date) {
 		if (repository.findByDateOrderByDateDesc(date).isEmpty()) {
-			throw new ObjectNotFound("Nenhuma venda encontrada com a data: %s".formatted(date));
+			throw new ObjectNotFound("Nenhuma venda encontrada");
 		}
 		return repository.findByDateOrderByDateDesc(date);
 	}

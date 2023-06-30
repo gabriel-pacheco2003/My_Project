@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,22 +29,26 @@ public class ProductResource {
 	@Autowired
 	private CategoryService categoryService;
 
+	@Secured({"ROLE_ADMIN"})
 	@PostMapping
 	public ResponseEntity<Product> insert(@RequestBody Product product) {
 		categoryService.findById(product.getCategory().getId());
 		return ResponseEntity.ok(service.insert(product));
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping("/{id}")
 	public ResponseEntity<Product> findById(@PathVariable Integer id) {
 		return ResponseEntity.ok(service.findById(id));
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping
 	public ResponseEntity<List<Product>> listAll() {
 		return ResponseEntity.ok(service.listAll().stream().map((phone) -> phone).toList());
 	}
 
+	@Secured({"ROLE_ADMIN"})
 	@PutMapping("/{id}")
 	public ResponseEntity<Product> update(@PathVariable Integer id, @RequestBody Product product) {
 		product.setId(id);
@@ -51,18 +56,21 @@ public class ProductResource {
 		return ResponseEntity.ok(service.update(product));
 	}
 
+	@Secured({"ROLE_ADMIN"})
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Product> delete(@PathVariable Integer id) {
 		service.delete(id);
 		return ResponseEntity.ok().build();
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping("/name/{name}")
 	public ResponseEntity<List<Product>> findByNameContainingIgnoreCase(@PathVariable String name) {
 		return ResponseEntity
 				.ok(service.findByNameContainingIgnoreCase(name).stream().map((product) -> product).toList());
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping("/inicialAmount/{amountIn}/finalAmount/{amountFin}")
 	public ResponseEntity<List<Product>> findByAmountBetween(@PathVariable Integer amountIn,
 			@PathVariable Integer amountFin) {
@@ -70,12 +78,14 @@ public class ProductResource {
 				.ok(service.findByAmountBetween(amountIn, amountFin).stream().map((product) -> product).toList());
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping("/price/{price}")
 	public ResponseEntity<List<Product>> findByPriceOrderByPriceDesc(@PathVariable Double price) {
 		return ResponseEntity
 				.ok(service.findByPriceOrderByPriceDesc(price).stream().map((product) -> product).toList());
 	}
 	
+	@Secured({"ROLE_USER"})
 	@GetMapping("/inicialPrice/{priceIn}/finalPrice/{priceFin}")
 	public ResponseEntity<List<Product>> findByPriceBetweenOrderByPriceDesc(@PathVariable Double priceIn,
 			@PathVariable Double priceFin) {
@@ -83,6 +93,7 @@ public class ProductResource {
 				.ok(service.findByPriceBetweenOrderByPriceDesc(priceIn, priceFin).stream().map((product) -> product).toList());
 	}
 	
+	@Secured({"ROLE_USER"})
 	@GetMapping("/category/{categoryId}")
 	public ResponseEntity<List<Product>> findByCategory(@PathVariable Category categoryId) {
 		return ResponseEntity.ok(service.findByCategory(categoryService.findById(categoryId.getId())));

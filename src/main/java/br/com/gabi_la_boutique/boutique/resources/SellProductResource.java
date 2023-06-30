@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,7 @@ public class SellProductResource {
 	@Autowired
 	private ProductService productService;
 
+	@Secured({"ROLE_ADMIN"})
 	@PostMapping
 	public ResponseEntity<SellProductDTO> insert(@RequestBody SellProductDTO sellProductDTO) {
 		return ResponseEntity.ok(
@@ -42,16 +44,19 @@ public class SellProductResource {
 
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping("/{id}")
 	public ResponseEntity<SellProductDTO> findById(@PathVariable Integer id) {
 		return ResponseEntity.ok(service.findById(id).toDTO());
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping
 	public ResponseEntity<List<SellProductDTO>> listAll() {
 		return ResponseEntity.ok(service.listAll().stream().map((sellProduct) -> sellProduct.toDTO()).toList());
 	}
 
+	@Secured({"ROLE_ADMIN"})
 	@PutMapping("/{id}")
 	public ResponseEntity<SellProductDTO> update(@PathVariable Integer id, @RequestBody SellProductDTO sellProductDTO) {
 		SellProduct sellProduct = new SellProduct(sellProductDTO,
@@ -61,22 +66,26 @@ public class SellProductResource {
 		return ResponseEntity.ok(service.update(sellProduct).toDTO());
 	}
 
+	@Secured({"ROLE_ADMIN"})
 	@DeleteMapping("/{id}")
 	public ResponseEntity<SellProduct> delete(@PathVariable Integer id) {
 		service.delete(id);
 		return ResponseEntity.ok().build();
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping("/sell/{sell}")
 	public ResponseEntity<List<SellProduct>> findBySellOrderByAmountSell(@PathVariable Sell sell) {
 		return ResponseEntity.ok(service.findBySellOrderByAmountSell(sell));
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping("/product/{product}")
 	public ResponseEntity<List<SellProduct>> findByProductOrderByAmountSell(@PathVariable Product product) {
 		return ResponseEntity.ok(service.findByProductOrderByAmountSell(product));
 	}
 
+	@Secured({"ROLE_USER"})
 	@GetMapping("/inicialAmountSell/{amountSellIn}/finalAmountSell/{amountSellFin}")
 	public ResponseEntity<List<SellProduct>> findByAmountSellBetween(@PathVariable Integer amountSellIn,
 			@PathVariable Integer amountSellFin) {

@@ -13,6 +13,7 @@ import br.com.gabi_la_boutique.boutique.services.PhoneService;
 import br.com.gabi_la_boutique.boutique.services.ProductService;
 import br.com.gabi_la_boutique.boutique.services.SellProductService;
 import br.com.gabi_la_boutique.boutique.services.SellService;
+import br.com.gabi_la_boutique.boutique.services.UserService;
 import br.com.gabi_la_boutique.boutique.services.impl.AddressServiceImpl;
 import br.com.gabi_la_boutique.boutique.services.impl.CategoryServiceImpl;
 import br.com.gabi_la_boutique.boutique.services.impl.CityServiceImpl;
@@ -21,6 +22,7 @@ import br.com.gabi_la_boutique.boutique.services.impl.PhoneServiceImpl;
 import br.com.gabi_la_boutique.boutique.services.impl.ProductServiceImpl;
 import br.com.gabi_la_boutique.boutique.services.impl.SellProductServiceImpl;
 import br.com.gabi_la_boutique.boutique.services.impl.SellServiceImpl;
+import br.com.gabi_la_boutique.boutique.services.impl.UserServiceImpl;
 
 @TestConfiguration
 @SpringBootTest
@@ -65,6 +67,11 @@ public class BaseTests {
 	@Bean
 	public SellService sellService() {
 		return new SellServiceImpl();
+	}
+	
+	@Bean
+	public UserService userService() {
+		return new UserServiceImpl();
 	}
 
 }

@@ -25,7 +25,7 @@ public class SellProductServiceImpl implements SellProductService{
 		}
 		
 		if (sellProduct.getProduct() == null){
-			throw new IntegrityViolation("Produto inválida"); 
+			throw new IntegrityViolation("Produto inválido"); 
 		}
 		
 		if (sellProduct.getAmountSell() == null || sellProduct.getAmountSell() <= 0){
@@ -71,7 +71,7 @@ public class SellProductServiceImpl implements SellProductService{
 	@Override
 	public List<SellProduct> findBySellOrderByAmountSell(Sell sell) {
 		if (repository.findBySellOrderByAmountSell(sell).isEmpty()) {
-			throw new ObjectNotFound("Nenhuma Venda/Produto encontrada com a venda %s".formatted(sell));
+			throw new ObjectNotFound("Nenhuma Venda/Produto encontrada");
 		}
 		return repository.findBySellOrderByAmountSell(sell);
 	}
@@ -79,7 +79,7 @@ public class SellProductServiceImpl implements SellProductService{
 	@Override
 	public List<SellProduct> findByProductOrderByAmountSell(Product product) {
 		if (repository.findByProductOrderByAmountSell(product).isEmpty()) {
-			throw new ObjectNotFound("Nenhuma Venda/Produto encontrada com o produto %s".formatted(product));
+			throw new ObjectNotFound("Nenhuma Venda/Produto encontrada");
 		}
 		return repository.findByProductOrderByAmountSell(product);
 	}
