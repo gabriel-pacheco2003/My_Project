@@ -11,7 +11,7 @@ import br.com.gabi_la_boutique.boutique.models.Phone;
 @Repository
 public interface PhoneRepository extends JpaRepository<Phone, Integer>{
 
-	List<Phone> findByNumberOrderByClient(String number);
+	List<Phone> findByNumberContainingOrderByClient(String number);
 
 	List<Phone> findByClient(Client client);
 	

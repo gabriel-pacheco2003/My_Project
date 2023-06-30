@@ -67,9 +67,9 @@ public class PhoneResource {
 
 	@Secured({"ROLE_USER"})
 	@GetMapping("/number/{number}")
-	public ResponseEntity<List<Phone>> findByNumberOrderByClient(@PathVariable String number) {
+	public ResponseEntity<List<Phone>> findByNumberContainingOrderByClient(@PathVariable String number) {
 		return ResponseEntity
-				.ok(service.findByNumberOrderByClient(number).stream().map((phone) -> phone).toList());
+				.ok(service.findByNumberContainingOrderByClient(number).stream().map((phone) -> phone).toList());
 	}
 
 	@Secured({"ROLE_USER"})

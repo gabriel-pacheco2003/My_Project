@@ -72,7 +72,7 @@ public class ClientResource {
 				.ok(service.findByNameContainingIgnoreCase(name).stream().map((client) -> client).toList());
 	}
 
-	@Secured({"ROLE_USER"})
+	@Secured({"ROLE_ADMIN"})
 	@GetMapping("/email/{email}")
 	public ResponseEntity<List<Client>> findByEmailContainingIgnoreCase(@PathVariable String email) {
 		return ResponseEntity

@@ -67,11 +67,11 @@ public class PhoneServiceImpl implements PhoneService {
 	}
 
 	@Override
-	public List<Phone> findByNumberOrderByClient(String number) {
-		if (repository.findByNumberOrderByClient(number).isEmpty()) {
+	public List<Phone> findByNumberContainingOrderByClient(String number) {
+		if (repository.findByNumberContainingOrderByClient(number).isEmpty()) {
 			throw new ObjectNotFound("Nenhum número de telefone encontrado com o número %s".formatted(number));
 		}
-		return repository.findByNumberOrderByClient(number);
+		return repository.findByNumberContainingOrderByClient(number);
 	}
 
 	@Override

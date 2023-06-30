@@ -1,5 +1,7 @@
 package br.com.gabi_la_boutique.boutique.models.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,16 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class ClientDTO {
+public class SellByAddressDTO {
 
-	private Integer id;
-
-	private String name;
+	private String address;
 	
-	private String email;
-
-	private Integer addressId;
-	
-	private String cityName;
+	private List<SellDTO> sells; 
 	
 }

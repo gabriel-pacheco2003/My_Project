@@ -20,6 +20,7 @@ import br.com.gabi_la_boutique.boutique.models.Sell;
 import br.com.gabi_la_boutique.boutique.models.dto.SellDTO;
 import br.com.gabi_la_boutique.boutique.services.ClientService;
 import br.com.gabi_la_boutique.boutique.services.SellService;
+import br.com.gabi_la_boutique.boutique.utils.DateUtils;
 
 @RestController
 @RequestMapping("/sell")
@@ -73,8 +74,8 @@ public class SellResource {
 
 	@Secured({"ROLE_USER"})
 	@GetMapping("/date/{date}")
-	public ResponseEntity<List<Sell>> findByDateOrderByDateDesc(@PathVariable LocalDate date) {
-		return ResponseEntity.ok(service.findByDateOrderByDateDesc(date).stream().map((sell) -> sell).toList());
+	public ResponseEntity<List<Sell>> findByDateOrderByDateDesc(@PathVariable String date) {
+		return ResponseEntity.ok(service.findByDateOrderByDateDesc(DateUtils.stringToDate(date)).stream().map((sell) -> sell).toList());
 	}
 
 	@Secured({"ROLE_USER"})

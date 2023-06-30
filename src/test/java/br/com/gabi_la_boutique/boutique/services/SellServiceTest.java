@@ -51,7 +51,7 @@ public class SellServiceTest extends BaseTests {
 	@Sql("classpath:/resources/sqls/cliente.sql")
 	@Sql("classpath:/resources/sqls/venda.sql")
 	void insertSellTest() {
-		Sell sell = new Sell(1, clientService.findById(1), DateUtils.stringToDate("31/01/2023"));
+		Sell sell = new Sell(1, clientService.findById(1), DateUtils.stringToDate("31-01-2023"));
 		sellService.insert(sell);
 		assertEquals(1, sell.getId());
 		assertEquals("Cliente 1", sell.getClient().getName());
@@ -61,7 +61,7 @@ public class SellServiceTest extends BaseTests {
 	@Test
 	@DisplayName("Teste inserir cliente nulo")
 	void insertNullClientTest() {
-		Sell sell = new Sell(null, null, DateUtils.stringToDate("01/01/2023"));
+		Sell sell = new Sell(null, null, DateUtils.stringToDate("01-01-2023"));
 		var exception = assertThrows(IntegrityViolation.class, () -> sellService.insert(sell));
 		assertEquals("Cliente inválido", exception.getMessage());
 	}
@@ -91,7 +91,7 @@ public class SellServiceTest extends BaseTests {
 	@Sql("classpath:/resources/sqls/venda.sql")
 	void updateSellTest() {
 		assertEquals(2023, sellService.findById(1).getDate().getYear());
-		Sell sellUpdate = new Sell(1, clientService.findById(1), DateUtils.stringToDate("01/02/2023"));
+		Sell sellUpdate = new Sell(1, clientService.findById(1), DateUtils.stringToDate("01-02-2023"));
 		sellService.update(sellUpdate);
 		assertEquals(2023, sellService.findById(1).getDate().getYear());
 	}
@@ -104,7 +104,7 @@ public class SellServiceTest extends BaseTests {
 	@Sql("classpath:/resources/sqls/venda.sql")
 	void updateSellWithInvalidDateTest() {
 		assertEquals(2023, sellService.findById(1).getDate().getYear());
-		Sell sellUpdate = new Sell(1, clientService.findById(1), DateUtils.stringToDate("01/01/2025")); 
+		Sell sellUpdate = new Sell(1, clientService.findById(1), DateUtils.stringToDate("01-01-2025")); 
 		var exception = assertThrows(IntegrityViolation.class, () -> sellService.update(sellUpdate));
 		assertEquals("Data inválida", exception.getMessage());
 	} 
@@ -155,7 +155,7 @@ public class SellServiceTest extends BaseTests {
 	@Sql("classpath:/resources/sqls/cliente.sql")
 	@Sql("classpath:/resources/sqls/venda.sql")
 	void findByDateTest() {
-		assertEquals(1, sellService.findByDateOrderByDateDesc(DateUtils.stringToDate("01/01/2023")).size());
+		assertEquals(1, sellService.findByDateOrderByDateDesc(DateUtils.stringToDate("01-01-2023")).size());
 	}
 
 	@Test
@@ -166,7 +166,7 @@ public class SellServiceTest extends BaseTests {
 	@Sql("classpath:/resources/sqls/venda.sql")
 	void findByDateNotFoundTest() {
 		var exception = assertThrows(ObjectNotFound.class,
-				() -> sellService.findByDateOrderByDateDesc(DateUtils.stringToDate("01/01/2020")));
+				() -> sellService.findByDateOrderByDateDesc(DateUtils.stringToDate("01-01-2020")));
 		assertEquals("Nenhuma venda encontrada", exception.getMessage());
 	}
 
@@ -178,7 +178,7 @@ public class SellServiceTest extends BaseTests {
 	@Sql("classpath:/resources/sqls/venda.sql")
 	void findByDateBetweenTest() {
 		assertEquals(3, sellService
-				.findByDateBetween(DateUtils.stringToDate("01/01/2022"), DateUtils.stringToDate("01/06/2023")).size());
+				.findByDateBetween(DateUtils.stringToDate("01-01-2022"), DateUtils.stringToDate("01-06-2023")).size());
 	}
 
 	@Test
@@ -189,7 +189,7 @@ public class SellServiceTest extends BaseTests {
 	@Sql("classpath:/resources/sqls/venda.sql")
 	void findByDateBetweenNotFoundTest() {
 		var exception = assertThrows(ObjectNotFound.class,
-				() -> sellService.findByDateBetween(DateUtils.stringToDate("01/01/2022"), DateUtils.stringToDate("01/02/2022")));
+				() -> sellService.findByDateBetween(DateUtils.stringToDate("01-01-2022"), DateUtils.stringToDate("01-02-2022")));
 		assertEquals("Nenhuma venda encontrada", exception.getMessage());
 	}
 	

@@ -22,7 +22,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
 import br.com.gabi_la_boutique.boutique.BoutiqueApplication;
+import br.com.gabi_la_boutique.boutique.config.jwt.LoginDTO;
 import br.com.gabi_la_boutique.boutique.models.City;
+import br.com.gabi_la_boutique.boutique.models.dto.UserDTO;
 import br.com.gabi_la_boutique.boutique.resources.exceptions.StandardError;
 
 @ActiveProfiles("test")
@@ -32,22 +34,31 @@ public class CityResourceTest {
 
 	@Autowired
 	protected TestRestTemplate rest;
-
-	private ResponseEntity<City> getCity(String url) {
-		return rest.getForEntity(url, City.class);
-	}
-
-	private ResponseEntity<List<City>> getCities(String url) {
-		return rest.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<City>>() {
-		});
-	}
 	
 	@Test
 	@DisplayName("Buscar por id")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void getOkTest() {
-		ResponseEntity<City> response = getCity("/city/1");
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		 ResponseEntity<City> response = rest.exchange("/city/1", HttpMethod.GET, new HttpEntity<>(null, headers),
+	                City.class);
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
 		assertEquals("Tubarão", response.getBody().getName());
 	}
@@ -56,91 +67,168 @@ public class CityResourceTest {
 	@DisplayName("Buscar por id inexistente")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void getNotFoundTest() {
-		ResponseEntity<City> response = getCity("/city/100");
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<City> response = rest.exchange("/city/100", HttpMethod.GET, new HttpEntity<>(null, headers),
+                City.class);
 		assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
 	}
 	
 	@Test
-	@DisplayName("Cadastrar cidade")
+	@DisplayName("Inserir cidade")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void insertCountryTest() {
 		City city = new City(1, "name");
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<City> requestEntity = new HttpEntity<>(city, headers);
-		ResponseEntity<City> responseEntity = rest.exchange(
-	            "/city", 
-	            HttpMethod.POST,  
-	            requestEntity,    
-	            City.class   
-	    );
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-		assertEquals("name", responseEntity.getBody().getName());
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<City> response = rest.exchange("/city", HttpMethod.POST, new HttpEntity<>(city, headers),
+                City.class);
+		assertEquals(response.getStatusCode(), HttpStatus.OK);
+		assertEquals("name", response.getBody().getName());
 	}
 	
 	@Test
-	@DisplayName("Cadastrar cidade já existente")
+	@DisplayName("Inserir cidade já existente")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void insertCountryExistsTest() {
 		City city = new City(null, "Camacho");
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<City> requestEntity = new HttpEntity<>(city, headers);
-		ResponseEntity<City> responseEntity = rest.exchange(
-	            "/city", 
-	            HttpMethod.POST,  
-	            requestEntity,    
-	            City.class   
-	    );
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<City> response = rest.exchange("/city", HttpMethod.POST, new HttpEntity<>(city, headers),
+                City.class);
+		assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
 	@DisplayName("Alterar cidade")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void udpateCountryTest() {
-		City city = new City(null, "update");
+		City city = new City(1, "update");
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<City> requestEntity = new HttpEntity<>(city, headers);
-		ResponseEntity<City> responseEntity = rest.exchange(
-	            "/city/1", 
-	            HttpMethod.PUT,  
-	            requestEntity,    
-	            City.class   
-	    );
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-		assertEquals("update", responseEntity.getBody().getName());
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<City> response = rest.exchange("/city/1", HttpMethod.PUT, new HttpEntity<>(city, headers),
+                City.class);
+		assertEquals(response.getStatusCode(), HttpStatus.OK);
+		assertEquals("update", response.getBody().getName());
 	}
 	
 	@Test
 	@DisplayName("Alterar cidade já existente")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void udpateCountryExistsTest() {
 		City city = new City(1, "Camacho");
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<City> requestEntity = new HttpEntity<>(city, headers);
-		ResponseEntity<City> responseEntity = rest.exchange(
-	            "/city/1", 
-	            HttpMethod.PUT,  
-	            requestEntity,    
-	            City.class   
-	    );
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<City> response = rest.exchange("/city/1", HttpMethod.PUT, new HttpEntity<>(city, headers),
+                City.class);
+		assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
 	@DisplayName("Procurar por nome")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void findByNameTest() {
-		ResponseEntity<List<City>> response = getCities("/city/name/Tubarão");
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<List<City>> response = rest.exchange("/city/name/Tubarão", HttpMethod.GET, new HttpEntity<>(null, headers),
+                new ParameterizedTypeReference<List<City>>() {
+				});
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
 	}
 	
@@ -148,8 +236,26 @@ public class CityResourceTest {
 	@DisplayName("Procurar por nome inexistente")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void findByNameNonExistsTest() {
-		ResponseEntity<StandardError> response = rest.getForEntity("/city/name/nsadlkbag", StandardError.class);
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<StandardError> response = rest.exchange("/city/name/dhaslkv", HttpMethod.GET, new HttpEntity<>(null, headers),
+                StandardError.class);
 		assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
 	}
 	
@@ -157,8 +263,27 @@ public class CityResourceTest {
 	@DisplayName("Listar todos")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void listAllTest() {
-		ResponseEntity<List<City>> response = getCities("/city");
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<List<City>> response = rest.exchange("/city", HttpMethod.GET, new HttpEntity<>(null, headers),
+                new ParameterizedTypeReference<List<City>>() {
+				});
 		assertEquals(response.getStatusCode(), HttpStatus.OK);
 		assertEquals(3, response.getBody().size());
 	}
@@ -166,8 +291,26 @@ public class CityResourceTest {
 	@Test
 	@DisplayName("Listar todos sem possuir cadastros")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void listAllWithNoRegistersTest() {
-		ResponseEntity<StandardError> response = rest.getForEntity("/city", StandardError.class);
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<StandardError> response = rest.exchange("/city", HttpMethod.GET, new HttpEntity<>(null, headers),
+				StandardError.class);
 		assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
 	}
 	
@@ -175,17 +318,27 @@ public class CityResourceTest {
 	@DisplayName("Remover cidade")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void deleteCountryTest() {
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<City> requestEntity = new HttpEntity<>(headers);
-		ResponseEntity<City> responseEntity = rest.exchange(
-				"/city/1", 
-				HttpMethod.DELETE,  
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
 				requestEntity,    
-				City.class   
-		);
+				String.class   
+				);
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<City> response = rest.exchange("/city/1", HttpMethod.DELETE, new HttpEntity<>(null, headers),
+                City.class);
+		assertEquals(response.getStatusCode(), HttpStatus.OK);
 
 	}
 	
@@ -193,18 +346,53 @@ public class CityResourceTest {
 	@DisplayName("Remover cidade inexistente")
 	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
 	@Sql({"classpath:/resources/sqls/cidade.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
 	public void deleteCountryNonExistsTest() {
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<City> requestEntity = new HttpEntity<>(headers);
-		ResponseEntity<City> responseEntity = rest.exchange(
-				"/city/10", 
-				HttpMethod.DELETE,  
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
 				requestEntity,    
-				City.class   
-		);
-		assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<City> response = rest.exchange("/city/100", HttpMethod.DELETE, new HttpEntity<>(null, headers),
+                City.class);
+		assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
 
+	}
+	
+	@Test
+	@DisplayName("Obter Token")
+	@Sql({"classpath:/resources/sqls/limpa_tabelas.sql"})
+	@Sql({"classpath:/resources/sqls/usuario.sql"})
+	public void getToken() {
+		LoginDTO loginDTO = new LoginDTO("email1", "senha1");
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<LoginDTO> requestEntity = new HttpEntity<>(loginDTO, headers);
+		ResponseEntity<String> responseEntity = rest.exchange(
+				"/auth/token", 
+				HttpMethod.POST,  
+				requestEntity,    
+				String.class   
+				);
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+		String token = responseEntity.getBody();
+		System.out.println("****************" + token);
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setBearerAuth(token);
+		ResponseEntity<List<UserDTO>> response =  rest.exchange("/user", HttpMethod.GET, new HttpEntity<>(null, headers),new ParameterizedTypeReference<List<UserDTO>>() {});
+		assertEquals(response.getStatusCode(), HttpStatus.OK);
 	}
 
 }

@@ -150,7 +150,7 @@ public class PhoneServiceTest extends BaseTests{
 	@Sql("classpath:/resources/sqls/cliente.sql")
 	@Sql("classpath:/resources/sqls/telefone.sql")
 	void findByNumberTest() {
-		assertEquals(1, phoneService.findByNumberOrderByClient("(11) 11111-1111").size());
+		assertEquals(1, phoneService.findByNumberContainingOrderByClient("(11) 11111-1111").size());
 	}
 	
 	@Test
@@ -161,7 +161,7 @@ public class PhoneServiceTest extends BaseTests{
 	@Sql("classpath:/resources/sqls/telefone.sql")
 	void findByNumberNotFoundTest() {
 		var exception = assertThrows(ObjectNotFound.class,
-				() -> phoneService.findByNumberOrderByClient("48123456789"));
+				() -> phoneService.findByNumberContainingOrderByClient("48123456789"));
 		assertEquals("Nenhum número de telefone encontrado com o número 48123456789", exception.getMessage());
 	}
 	

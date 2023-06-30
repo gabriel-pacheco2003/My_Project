@@ -17,7 +17,7 @@ public interface PhoneService {
 
 	void delete(Integer id);
 	
-	List<Phone> findByNumberOrderByClient(String number);
+	List<Phone> findByNumberContainingOrderByClient(String number);
 
 	List<Phone> findByClient(Client client);
 	
